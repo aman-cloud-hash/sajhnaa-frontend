@@ -1,0 +1,482 @@
+/* ============================================
+   SAJHNAA — HOME PAGE (Jewelry)
+   ============================================ */
+
+/* ════ HERO ════ */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+}
+
+.hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center,
+            transparent 0%,
+            var(--bg-primary) 85%);
+    z-index: 1;
+}
+
+.hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-4xl) 0;
+}
+
+.hero__label {
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    font-weight: 500;
+}
+
+.hero__title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+.hero__title-accent {
+    background: linear-gradient(135deg, #d4b07a 0%, #c3a16e 40%, #e8c97a 70%, #a8834e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero__subtitle {
+    max-width: 560px;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.hero__cta {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.hero__scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    z-index: 2;
+}
+
+.hero__scroll-hint span {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.hero__scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--accent-primary), transparent);
+    animation: scroll-pulse 2s ease-in-out infinite;
+}
+
+@keyframes scroll-pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scaleY(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleY(1.2);
+    }
+}
+
+/* ════ TRUST BAR ════ */
+.trust-bar {
+    padding: var(--space-2xl) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.trust-bar__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+}
+
+.trust-bar__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    justify-content: center;
+}
+
+.trust-bar__item svg {
+    font-size: 1.5rem;
+    color: var(--accent-primary);
+    flex-shrink: 0;
+}
+
+.trust-bar__item strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.trust-bar__item span {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+/* ════ SECTIONS ════ */
+.section {
+    padding: var(--space-4xl) 0;
+}
+
+.section__header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+}
+
+.section__label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+}
+
+.section__title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.2;
+}
+
+.section__cta {
+    text-align: center;
+    margin-top: var(--space-2xl);
+}
+
+/* ════ CATEGORIES ════ */
+.categories-section {
+    background: var(--bg-secondary);
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: var(--space-lg);
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-2xl) var(--space-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-gradient);
+    transform: scaleX(0);
+    transition: transform var(--transition-base);
+}
+
+.category-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(195, 161, 110, 0.12);
+}
+
+.category-card:hover::before {
+    transform: scaleX(1);
+}
+
+.category-card__img-container {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    transition: all var(--transition-base);
+}
+
+.category-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category-card:hover .category-card__img-container {
+    border-color: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+.category-card__name {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.category-card__count {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.category-card__arrow {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    color: var(--text-tertiary);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all var(--transition-base);
+}
+
+.category-card:hover .category-card__arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ════ PRODUCTS GRID ════ */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+/* ════ BRIDAL BANNER ════ */
+.bridal-banner {
+    padding: var(--space-4xl) 0;
+    background: linear-gradient(135deg, rgba(195, 161, 110, 0.05) 0%, transparent 50%, rgba(195, 161, 110, 0.03) 100%);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bridal-banner__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+}
+
+.bridal-banner__label {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+}
+
+.bridal-banner__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15;
+    margin-top: var(--space-md);
+}
+
+.bridal-banner__desc {
+    margin-top: var(--space-lg);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+}
+
+.bridal-banner__visual {
+    height: 400px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+}
+
+.bridal-banner__img-fallback {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.bridal-banner__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+}
+
+.bridal-banner__visual:hover .bridal-banner__img {
+    transform: scale(1.05);
+}
+
+/* ════ STATS ════ */
+.stats-section {
+    padding: var(--space-4xl) 0;
+    background: var(--bg-secondary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+}
+
+.stat-card {
+    text-align: center;
+    padding: var(--space-2xl);
+}
+
+.stat-card__value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #d4b07a, #c3a16e, #e8c97a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-card__label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-top: var(--space-sm);
+    letter-spacing: 0.03em;
+}
+
+/* ════ TESTIMONIALS ════ */
+.testimonial-section {
+    border-top: 1px solid var(--border-color);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+}
+
+.testimonial-card {
+    padding: var(--space-2xl);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+}
+
+.testimonial-card:hover {
+    border-color: var(--border-color-strong);
+    box-shadow: var(--shadow-card);
+}
+
+.testimonial-card__stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: var(--space-md);
+}
+
+.testimonial-card__stars .star--filled {
+    color: var(--accent-primary);
+    fill: var(--accent-primary);
+    font-size: 0.9rem;
+}
+
+.testimonial-card__text {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.testimonial-card__author {
+    display: block;
+    margin-top: var(--space-lg);
+    color: var(--accent-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* ════ RESPONSIVE ════ */
+@media (max-width: 1024px) {
+    .bridal-banner__content {
+        grid-template-columns: 1fr;
+    }
+
+    .bridal-banner__visual {
+        height: 300px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .trust-bar__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+    }
+
+    .hero__title {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .trust-bar__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}

@@ -1,0 +1,124 @@
+.toast-container {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: 380px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast__icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.toast--success .toast__icon {
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--success);
+}
+
+.toast--error .toast__icon {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--error);
+}
+
+.toast--warning .toast__icon {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--warning);
+}
+
+.toast--info .toast__icon {
+    background: rgba(96, 165, 250, 0.15);
+    color: var(--info);
+}
+
+.toast__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: block;
+}
+
+.toast__message {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+}
+
+.toast__close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    color: var(--text-tertiary);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.toast__close:hover {
+    background: var(--bg-glass);
+    color: var(--text-primary);
+}
+
+.toast__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    transform-origin: left;
+}
+
+.toast--success .toast__progress {
+    background: var(--success);
+}
+
+.toast--error .toast__progress {
+    background: var(--error);
+}
+
+.toast--warning .toast__progress {
+    background: var(--warning);
+}
+
+.toast--info .toast__progress {
+    background: var(--info);
+}
+
+@media (max-width: 480px) {
+    .toast-container {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}

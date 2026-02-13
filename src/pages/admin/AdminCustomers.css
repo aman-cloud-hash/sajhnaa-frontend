@@ -1,0 +1,189 @@
+/* Basic Structure */
+.admin-customers-page {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.customers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.customers-header h2 {
+    font-size: 1.6rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.summary-cards {
+    display: flex;
+    gap: 24px;
+}
+
+.summary-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 16px 24px;
+    border-radius: 12px;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.summary-card .icon {
+    font-size: 2rem;
+    color: var(--accent-primary);
+    background: rgba(195, 161, 110, 0.1);
+    padding: 10px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary-card h4 {
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-card h3 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Table Styles */
+.customers-table-container {
+    background-color: var(--bg-secondary);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    padding: 12px;
+}
+
+.customers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.customers-table th,
+.customers-table td {
+    padding: 18px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.customers-table th {
+    color: var(--text-tertiary);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.customers-table tr:last-child td {
+    border-bottom: none;
+}
+
+.customers-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.customer-name {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--accent-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.contact-info span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-icon {
+    color: var(--text-tertiary);
+}
+
+.spent-amount {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    /* Changed to primary text for cleaner look */
+    font-size: 1rem;
+}
+
+.order-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-width: 60px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.status-badge.active {
+    background-color: rgba(0, 242, 96, 0.15);
+    color: #00f260;
+}
+
+.no-customers {
+    padding: 60px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 1.1rem;
+}
