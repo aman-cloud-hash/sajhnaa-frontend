@@ -9,7 +9,9 @@ import {
   updateDoc,
   doc,
   query,
-  orderBy
+  orderBy,
+  setDoc,
+  getDoc
 } from 'firebase/firestore';
 import {
   createUserWithEmailAndPassword,
@@ -44,22 +46,31 @@ const useStore = create(
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
+
+          // Get additional user data from Firestore
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          const userData = userDoc.exists() ? userDoc.data() : {};
+
           set({
             isAuthenticated: true,
             user: {
               uid: user.uid,
-              name: user.displayName || 'User',
-              email: user.email
+              name: user.displayName || userData.name || 'User',
+              email: user.email,
+              ...userData
             }
           });
           get().addNotification?.('Welcome back!', `Signed in as ${user.email}`, 'success');
           return { success: true };
         } catch (error) {
+          console.error("Login error details:", error);
           let message = 'Login failed. Please check your credentials.';
           if (error.code === 'auth/user-not-found') {
             message = 'No account found with this email. Please register first.';
           } else if (error.code === 'auth/wrong-password') {
             message = 'Incorrect password. Try again.';
+          } else if (error.code === 'auth/invalid-credential') {
+            message = 'Invalid email or password.';
           }
           get().addNotification?.('Login Error', message, 'error');
           return { success: false, error: message };
@@ -72,25 +83,41 @@ const useStore = create(
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
 
-          // Update profile with name
+          // Update Firebase Auth Profile
           await updateProfile(user, { displayName: name });
+
+          // Save User Data to Firestore Database
+          const userProfile = {
+            uid: user.uid,
+            name,
+            email,
+            createdAt: new Date().toISOString(),
+            addresses: [],
+            phone: '',
+            preferences: {
+              newsletter: true,
+              smsAlerts: false,
+              twoFactorAuth: false
+            }
+          };
+
+          await setDoc(doc(db, 'users', user.uid), userProfile);
 
           set({
             isAuthenticated: true,
-            user: {
-              uid: user.uid,
-              name: name,
-              email: user.email
-            }
+            user: userProfile
           });
-          get().addNotification?.('Account Created', `Welcome to Sajhnaa, ${name}!`, 'success');
+          get().addNotification?.('Account Created', `Greetings, ${name}! Your account is ready.`, 'success');
           return { success: true };
         } catch (error) {
+          console.error("Registration error details:", error);
           let message = 'Registration failed.';
           if (error.code === 'auth/email-already-in-use') {
             message = 'This email is already registered. Try logging in.';
           } else if (error.code === 'auth/weak-password') {
             message = 'Password should be at least 6 characters.';
+          } else if (error.code === 'auth/operation-not-allowed') {
+            message = 'Email/Password registration is not enabled in Firebase. Please enable it.';
           }
           get().addNotification?.('Registration Error', message, 'error');
           return { success: false, error: message };
@@ -108,14 +135,19 @@ const useStore = create(
       },
 
       initAuth: () => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
           if (user) {
+            // Fetch extra data from Firestore on refresh
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const userData = userDoc.exists() ? userDoc.data() : {};
+
             set({
               isAuthenticated: true,
               user: {
                 uid: user.uid,
-                name: user.displayName || 'User',
-                email: user.email
+                name: user.displayName || userData.name || 'User',
+                email: user.email,
+                ...userData
               },
               authLoading: false
             });
@@ -356,11 +388,10 @@ const useStore = create(
       },
     }),
     {
-      name: 'sajhnaa-store-v6', // New version for auth
+      name: 'sajhnaa-store-v7', // Increment version
       partialize: (state) => ({
         darkMode: state.darkMode,
         adminAuthenticated: state.adminAuthenticated,
-        // We don't persist auth state manually as Firebase Auth handles it
         cart: state.cart,
         wishlist: state.wishlist,
         recentlyViewed: state.recentlyViewed,
