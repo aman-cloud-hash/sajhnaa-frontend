@@ -308,16 +308,24 @@ const useStore = create(
       },
       fetchOrders: () => {
         try {
-          const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+          const q = query(collection(db, 'orders'));
           const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const orders = [];
+            const ordersData = [];
             querySnapshot.forEach((doc) => {
-              orders.push({ ...doc.data(), firebaseId: doc.id });
+              ordersData.push({ ...doc.data(), firebaseId: doc.id });
             });
-            set({ orders });
+
+            // Sort in JS to avoid Firestore Index requirements
+            const sortedOrders = ordersData.sort((a, b) => {
+              const timeA = new Date(a.createdAt || a.date || 0).getTime();
+              const timeB = new Date(b.createdAt || b.date || 0).getTime();
+              return timeB - timeA;
+            });
+
+            set({ orders: sortedOrders });
           }, (error) => {
-            console.error("Firestore Snapshot Error:", error);
-            get().addNotification?.('Database Error', 'Failed to sync orders data.', 'error');
+            console.error("Firestore Error:", error.code, error.message);
+            get().addNotification?.('Database Error', 'Failed to sync orders data. Check Firebase Rules.', 'error');
           });
           return unsubscribe;
         } catch (error) {
