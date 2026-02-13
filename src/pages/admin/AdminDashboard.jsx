@@ -5,7 +5,7 @@ import useStore from '../../store/useStore';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
-    const { orders, user } = useStore();
+    const { orders, user, customers, products } = useStore();
 
     // Calculate Stats
     const totalSales = orders.filter(o => o.status !== 'cancelled').reduce((acc, order) => acc + order.total, 0);
@@ -19,10 +19,10 @@ const AdminDashboard = () => {
         .filter(o => o.status !== 'cancelled' && new Date(o.date) >= sevenDaysAgo)
         .reduce((acc, o) => acc + o.total, 0);
 
-    // Genuine User Count based on unique emails in orders + the current admin/user
+    // Genuine User Count based on Firestore users collection + unique emails in orders
     const uniqueEmails = new Set(orders.map(o => o.customerEmail));
     if (user?.email) uniqueEmails.add(user.email);
-    const registeredUsersCount = uniqueEmails.size || 1;
+    const registeredUsersCount = Math.max(customers?.length || 0, uniqueEmails.size, 1);
 
     // Genuine stats based on available data
     const stats = [
