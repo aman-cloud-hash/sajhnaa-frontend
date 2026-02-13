@@ -37,8 +37,8 @@ const Account = () => {
                                 <FiUser />
                             </div>
                             <div>
-                                <strong>{user.name}</strong>
-                                <span>{user.email}</span>
+                                <strong>{user?.name || 'User'}</strong>
+                                <span>{user?.email || 'No email provided'}</span>
                             </div>
                         </div>
                         <nav className="account-sidebar__nav">
@@ -73,11 +73,11 @@ const Account = () => {
                                     <div className="account-form__row">
                                         <div className="account-form__field">
                                             <label>Full Name</label>
-                                            <input type="text" className="input" value={user.name} onChange={(e) => updateUser({ name: e.target.value })} />
+                                            <input type="text" className="input" value={user?.name || ''} readOnly />
                                         </div>
                                         <div className="account-form__field">
                                             <label>Email</label>
-                                            <input type="email" className="input" value={user.email} onChange={(e) => updateUser({ email: e.target.value })} />
+                                            <input type="email" className="input" value={user?.email || ''} readOnly />
                                         </div>
                                     </div>
                                     <div className="account-form__row">
@@ -99,7 +99,7 @@ const Account = () => {
                                     <button className="btn btn-secondary btn-sm"><FiPlus /> Add Address</button>
                                 </div>
                                 <div className="addresses-grid">
-                                    {user.addresses.map(addr => (
+                                    {(user?.addresses || []).map(addr => (
                                         <div key={addr.id} className={`address-card ${addr.isDefault ? 'address-card--default' : ''}`}>
                                             <div className="address-card__header">
                                                 <span className="address-card__label">{addr.label}</span>
@@ -111,6 +111,9 @@ const Account = () => {
                                             </div>
                                         </div>
                                     ))}
+                                    {(!user?.addresses || user.addresses.length === 0) && (
+                                        <div className="empty-state">No addresses saved yet.</div>
+                                    )}
                                 </div>
                             </motion.div>
                         )}
@@ -156,14 +159,14 @@ const Account = () => {
                                             <strong>Email Newsletter</strong>
                                             <span>Receive updates about new products and offers</span>
                                         </div>
-                                        <input type="checkbox" checked={user.preferences.newsletter} onChange={() => updateUser({ preferences: { ...user.preferences, newsletter: !user.preferences.newsletter } })} />
+                                        <input type="checkbox" checked={user?.preferences?.newsletter || false} readOnly />
                                     </label>
                                     <label className="preference-toggle">
                                         <div>
                                             <strong>SMS Alerts</strong>
                                             <span>Get order status updates via text message</span>
                                         </div>
-                                        <input type="checkbox" checked={user.preferences.smsAlerts} onChange={() => updateUser({ preferences: { ...user.preferences, smsAlerts: !user.preferences.smsAlerts } })} />
+                                        <input type="checkbox" checked={user?.preferences?.smsAlerts || false} readOnly />
                                     </label>
                                 </div>
                             </motion.div>

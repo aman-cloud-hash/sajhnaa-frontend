@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { products as initialProducts } from '../data/products';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import {
   collection,
   addDoc,
@@ -11,6 +11,13 @@ import {
   query,
   orderBy
 } from 'firebase/firestore';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile
+} from 'firebase/auth';
 
 const generateOrderId = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -31,20 +38,92 @@ const useStore = create(
       // User Authentication
       isAuthenticated: false,
       user: null,
-      login: (email, password) => {
-        const mockUser = { name: 'Jewelry Lover', email };
-        set({ isAuthenticated: true, user: mockUser });
-        get().addNotification?.('Welcome back!', `Signed in as ${email}`, 'success');
-        return true;
+      authLoading: true,
+
+      login: async (email, password) => {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          set({
+            isAuthenticated: true,
+            user: {
+              uid: user.uid,
+              name: user.displayName || 'User',
+              email: user.email
+            }
+          });
+          get().addNotification?.('Welcome back!', `Signed in as ${user.email}`, 'success');
+          return { success: true };
+        } catch (error) {
+          let message = 'Login failed. Please check your credentials.';
+          if (error.code === 'auth/user-not-found') {
+            message = 'No account found with this email. Please register first.';
+          } else if (error.code === 'auth/wrong-password') {
+            message = 'Incorrect password. Try again.';
+          }
+          get().addNotification?.('Login Error', message, 'error');
+          return { success: false, error: message };
+        }
       },
-      register: (userData) => {
-        set({ isAuthenticated: true, user: userData });
-        get().addNotification?.('Account Created', 'Welcome to Sajhnaa!', 'success');
-        return true;
+
+      register: async (userData) => {
+        try {
+          const { email, password, name } = userData;
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          // Update profile with name
+          await updateProfile(user, { displayName: name });
+
+          set({
+            isAuthenticated: true,
+            user: {
+              uid: user.uid,
+              name: name,
+              email: user.email
+            }
+          });
+          get().addNotification?.('Account Created', `Welcome to Sajhnaa, ${name}!`, 'success');
+          return { success: true };
+        } catch (error) {
+          let message = 'Registration failed.';
+          if (error.code === 'auth/email-already-in-use') {
+            message = 'This email is already registered. Try logging in.';
+          } else if (error.code === 'auth/weak-password') {
+            message = 'Password should be at least 6 characters.';
+          }
+          get().addNotification?.('Registration Error', message, 'error');
+          return { success: false, error: message };
+        }
       },
-      logout: () => {
-        set({ isAuthenticated: false, user: null });
-        get().addNotification?.('Signed Out', 'See you soon!', 'info');
+
+      logout: async () => {
+        try {
+          await signOut(auth);
+          set({ isAuthenticated: false, user: null });
+          get().addNotification?.('Signed Out', 'See you soon!', 'info');
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      },
+
+      initAuth: () => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            set({
+              isAuthenticated: true,
+              user: {
+                uid: user.uid,
+                name: user.displayName || 'User',
+                email: user.email
+              },
+              authLoading: false
+            });
+          } else {
+            set({ isAuthenticated: false, user: null, authLoading: false });
+          }
+        });
+        return unsubscribe;
       },
 
       // Products (Admin)
@@ -174,7 +253,8 @@ const useStore = create(
             { label: 'Out for Delivery', date: '', completed: false },
             { label: 'Delivered', date: '', completed: false },
           ],
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          userId: get().user?.uid || 'guest'
         };
 
         try {
@@ -276,12 +356,11 @@ const useStore = create(
       },
     }),
     {
-      name: 'sajhnaa-store-v5',
+      name: 'sajhnaa-store-v6', // New version for auth
       partialize: (state) => ({
         darkMode: state.darkMode,
         adminAuthenticated: state.adminAuthenticated,
-        isAuthenticated: state.isAuthenticated,
-        user: state.user,
+        // We don't persist auth state manually as Firebase Auth handles it
         cart: state.cart,
         wishlist: state.wishlist,
         recentlyViewed: state.recentlyViewed,

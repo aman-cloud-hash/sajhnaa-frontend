@@ -198,6 +198,13 @@ const Layout = ({ children }) => {
 };
 
 function App() {
+  const { initAuth } = useStore();
+
+  useEffect(() => {
+    const unsubscribe = initAuth();
+    return () => unsubscribe();
+  }, [initAuth]);
+
   return (
     <Router>
       <ThemeManager />

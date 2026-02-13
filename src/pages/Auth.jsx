@@ -29,28 +29,34 @@ const Auth = () => {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        if (isLogin) {
-            const success = login(formData.email, formData.password);
-            if (success) {
-                const from = location.state?.from?.pathname || '/account';
-                navigate(from, { replace: true });
+        try {
+            if (isLogin) {
+                const response = await login(formData.email, formData.password);
+                if (response.success) {
+                    const from = location.state?.from?.pathname || '/account';
+                    navigate(from, { replace: true });
+                }
+            } else {
+                // Basic validation
+                if (formData.password !== formData.confirmPassword) {
+                    alert('Passwords do not match');
+                    setLoading(false);
+                    return;
+                }
+                const response = await register({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password
+                });
+                if (response.success) {
+                    navigate('/account');
+                }
             }
-        } else {
-            // Basic validation
-            if (formData.password !== formData.confirmPassword) {
-                alert('Passwords do not match');
-                setLoading(false);
-                return;
-            }
-            const success = register({ name: formData.name, email: formData.email });
-            if (success) {
-                navigate('/account');
-            }
+        } catch (error) {
+            console.error("Auth error:", error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
