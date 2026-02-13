@@ -283,7 +283,7 @@ const useStore = create(
       },
     }),
     {
-      name: 'sajhnaa-store',
+      name: 'sajhnaa-store-v2', // Changed name to clear old cache
       partialize: (state) => ({
         darkMode: state.darkMode,
         adminAuthenticated: state.adminAuthenticated,
