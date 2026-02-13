@@ -28,6 +28,26 @@ const useStore = create(
       darkMode: true,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
 
+      // User Authentication
+      isAuthenticated: false,
+      user: null,
+      login: (email, password) => {
+        // Simple mock login
+        const mockUser = { name: 'Jewelry Lover', email };
+        set({ isAuthenticated: true, user: mockUser });
+        get().addNotification('Welcome back!', `Signed in as ${email}`, 'success');
+        return true;
+      },
+      register: (userData) => {
+        set({ isAuthenticated: true, user: userData });
+        get().addNotification('Account Created', 'Welcome to Sajhnaa!', 'success');
+        return true;
+      },
+      logout: () => {
+        set({ isAuthenticated: false, user: null });
+        get().addNotification('Signed Out', 'See you soon!', 'info');
+      },
+
       // Products (Admin)
       products: initialProducts,
       addProduct: (product) => {
@@ -85,7 +105,7 @@ const useStore = create(
       },
       clearCart: () => set({ cart: [] }),
       getCartTotal: () => {
-        return get().cart.reduce((total, item) => total + item.price * item.quantity, 0);
+        return get().cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
       },
       getCartCount: () => {
         return get().cart.reduce((count, item) => count + item.quantity, 0);
@@ -113,6 +133,13 @@ const useStore = create(
           set({ wishlist: [...wishlist, product] });
           get().addNotification('Success', 'Item added to wishlist.', 'success');
         }
+      },
+      removeFromWishlist: (productId) => {
+        set({ wishlist: get().wishlist.filter((item) => item.id !== productId) });
+        get().addNotification('Removed', 'Item removed from wishlist.', 'info');
+      },
+      isInWishlist: (productId) => {
+        return (get().wishlist || []).some((item) => item.id === productId);
       },
 
       // Orders
@@ -181,7 +208,7 @@ const useStore = create(
         if (!order) return;
 
         // Deep clone tracking steps
-        let updatedSteps = order.trackingSteps.map(step => ({ ...step }));
+        let updatedSteps = (order.trackingSteps || []).map(step => ({ ...step }));
 
         // Helper to update a specific step
         const markComplete = (labelPattern, date) => {
@@ -195,7 +222,7 @@ const useStore = create(
         if (newStatus === 'shipped') {
           markComplete('shipped', today);
         } else if (newStatus === 'delivered') {
-          markComplete('shipped', order.trackingSteps.find(s => s.label.toLowerCase().includes('shipped'))?.date || today);
+          markComplete('shipped', (order.trackingSteps || []).find(s => s.label.toLowerCase().includes('shipped'))?.date || today);
           markComplete('out for delivery', today);
           markComplete('delivered', today);
         }
@@ -283,10 +310,16 @@ const useStore = create(
       },
     }),
     {
-      name: 'sajhnaa-store-v2', // Changed name to clear old cache
+      name: 'sajhnaa-store-v4', // Clear cache again
       partialize: (state) => ({
         darkMode: state.darkMode,
         adminAuthenticated: state.adminAuthenticated,
+        isAuthenticated: state.isAuthenticated,
+        user: state.user,
+        cart: state.cart,
+        wishlist: state.wishlist,
+        recentlyViewed: state.recentlyViewed,
+        savedForLater: state.savedForLater
       }),
     }
   )
