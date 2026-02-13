@@ -74,12 +74,12 @@ const isWebGLAvailable = () => {
 const LoadingFallback = () => (
     <mesh>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#eaeaea" wireframe />
+        <meshStandardMaterial color="#c3a16e" wireframe />
     </mesh>
 );
 
 const ProductViewer3D = ({ product, miniMode = false }) => {
-    const accentColor = product?.colors?.[0] || '#eaeaea';
+    const accentColor = product?.colors?.[0] || '#c3a16e';
 
     if (!isWebGLAvailable()) {
         return (
@@ -107,7 +107,7 @@ const ProductViewer3D = ({ product, miniMode = false }) => {
                         intensity={1}
                         castShadow
                     />
-                    <pointLight position={[-10, -10, -5]} intensity={0.5} color="#eaeaea" />
+                    <pointLight position={[-10, -10, -5]} intensity={0.5} color="#a8834e" />
 
                     <ProductModel image={product?.image} color={accentColor} />
 

@@ -3,44 +3,43 @@
    ============================================ */
 
 :root {
-  /* Color Palette — Dark Mode Default */
-  --bg-primary: #0a0a09;
-  /* Deep solid black with a hint of gold */
-  --bg-secondary: #0f0f0c;
-  /* Deep rich black with a subtle golden undertone */
-  --bg-tertiary: #1a1a14;
-  --bg-card: rgba(234, 234, 234, 0.05);
-  --bg-card-hover: rgba(234, 234, 234, 0.1);
-  --bg-glass: rgba(15, 15, 12, 0.7);
-  --bg-glass-strong: rgba(15, 15, 12, 0.9);
+  /* Color Palette — Light Mode Default */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --bg-tertiary: #f4f4f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fcfcfc;
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --bg-glass-strong: rgba(255, 255, 255, 0.95);
 
-  --text-primary: #f0f0f5;
-  --text-secondary: #a0a0b8;
-  --text-tertiary: #6a6a82;
-  --text-inverse: #0a0a0f;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #71717a;
+  --text-inverse: #ffffff;
 
-  --accent-primary: #eaeaea;
-  --accent-secondary: #c0c0c0;
-  --accent-gradient: linear-gradient(135deg, #ffffff 0%, #eaeaea 50%, #c0c0c0 100%);
-  --accent-glow: rgba(234, 234, 234, 0.3);
+  /* Gold Accents (Restored) */
+  --accent-primary: #c3a16e;
+  --accent-secondary: #d4af37;
+  --accent-gradient: linear-gradient(135deg, #fce38a 0%, #c3a16e 50%, #aa8c48 100%);
+  --accent-glow: rgba(195, 161, 110, 0.4);
 
-  --gold: #e0e0e0;
-  --gold-gradient: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, #bdbdbd 100%);
+  --gold: #c3a16e;
+  --gold-gradient: linear-gradient(135deg, #fce38a 0%, #c3a16e 50%, #aa8c48 100%);
 
-  --success: #34d399;
-  --warning: #fbbf24;
-  --error: #f87171;
-  --info: #60a5fa;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
 
-  --border-color: rgba(234, 234, 234, 0.15);
-  --border-color-strong: rgba(234, 234, 234, 0.25);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color-strong: rgba(0, 0, 0, 0.15);
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(234, 234, 234, 0.15);
-  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --shadow-glow: 0 0 20px rgba(195, 161, 110, 0.15);
+  --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.04);
 
   /* Typography */
   --font-display: 'Playfair Display', Georgia, serif;
@@ -83,34 +82,26 @@
   --sidebar-width: 280px;
 }
 
-/* Light Mode */
-[data-theme='light'] {
-  --bg-primary: #fafafa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f0f0f5;
-  --bg-card: rgba(0, 0, 0, 0.02);
-  --bg-card-hover: rgba(0, 0, 0, 0.04);
-  --bg-glass: rgba(255, 255, 255, 0.7);
-  --bg-glass-strong: rgba(255, 255, 255, 0.85);
+/* Dark Mode (Optional Override) */
+[data-theme='dark'] {
+  --bg-primary: #0a0a09;
+  --bg-secondary: #0f0f0c;
+  --bg-tertiary: #1a1a14;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.05);
+  --bg-glass: rgba(10, 10, 9, 0.7);
+  --bg-glass-strong: rgba(10, 10, 9, 0.9);
 
-  --text-primary: #1a1a2e;
-  --text-secondary: #4a4a68;
-  --text-tertiary: #8a8aa8;
-  --text-inverse: #f0f0f5;
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b8;
+  --text-tertiary: #6a6a82;
+  --text-inverse: #0a0a09;
 
-  --accent-primary: #a8834e;
-  --accent-secondary: #8a6a3a;
-  --accent-glow: rgba(168, 131, 78, 0.2);
-
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-color-strong: rgba(0, 0, 0, 0.15);
-
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 30px rgba(168, 131, 78, 0.12);
-  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.08);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-strong: rgba(255, 255, 255, 0.2);
 }
+
+
 
 /* ============================================
    Reset & Base
@@ -273,7 +264,7 @@ ol {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(234, 234, 234, 0.5), 0 0 40px rgba(234, 234, 234, 0.2);
+  box-shadow: 0 6px 25px rgba(195, 161, 110, 0.5), 0 0 40px rgba(195, 161, 110, 0.2);
 }
 
 .btn-secondary {
@@ -296,8 +287,8 @@ ol {
 
 .btn-outline:hover {
   border-color: var(--accent-primary);
-  background: rgba(234, 234, 234, 0.1);
-  box-shadow: 0 0 20px rgba(234, 234, 234, 0.2);
+  background: rgba(195, 161, 110, 0.1);
+  box-shadow: 0 0 20px rgba(195, 161, 110, 0.2);
   color: var(--accent-primary);
 }
 
@@ -343,8 +334,8 @@ ol {
 
 .card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(234, 234, 234, 0.3);
-  box-shadow: var(--shadow-card), 0 0 25px rgba(234, 234, 234, 0.15);
+  border-color: rgba(195, 161, 110, 0.3);
+  box-shadow: var(--shadow-card), 0 0 25px rgba(195, 161, 110, 0.15);
   transform: translateY(-4px);
 }
 
@@ -481,7 +472,7 @@ ol {
   }
 
   50% {
-    box-shadow: 0 0 40px var(--accent-glow), 0 0 60px rgba(234, 234, 234, 0.1);
+    box-shadow: 0 0 40px var(--accent-glow), 0 0 60px rgba(195, 161, 110, 0.1);
   }
 }
 

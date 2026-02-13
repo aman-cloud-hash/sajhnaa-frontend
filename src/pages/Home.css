@@ -59,7 +59,7 @@
 }
 
 .hero__title-accent {
-    background: linear-gradient(135deg, #ffffff 0%, #eaeaea 40%, #d4d4d4 70%, #a0a0a0 100%);
+    background: linear-gradient(135deg, #fce38a 0%, #c3a16e 50%, #aa8c48 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -226,7 +226,7 @@
 .category-card:hover {
     border-color: var(--accent-primary);
     transform: translateY(-6px);
-    box-shadow: 0 12px 40px rgba(234, 234, 234, 0.12);
+    box-shadow: 0 12px 40px rgba(195, 161, 110, 0.12);
 }
 
 .category-card:hover::before {
@@ -290,7 +290,7 @@
 /* ════ BRIDAL BANNER ════ */
 .bridal-banner {
     padding: var(--space-4xl) 0;
-    background: linear-gradient(135deg, rgba(234, 234, 234, 0.05) 0%, transparent 50%, rgba(234, 234, 234, 0.03) 100%);
+    background: linear-gradient(135deg, rgba(195, 161, 110, 0.05) 0%, transparent 50%, rgba(195, 161, 110, 0.03) 100%);
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
 }
@@ -369,7 +369,7 @@
     font-family: var(--font-display);
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 700;
-    background: linear-gradient(135deg, #ffffff, #eaeaea, #d4d4d4);
+    background: linear-gradient(135deg, #ffffff, #c3a16e, #d4d4d4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

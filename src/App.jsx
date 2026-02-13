@@ -95,10 +95,10 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Theme manager - Forced Dark Mode
+// Theme manager - Forced Light Mode (User Request)
 const ThemeManager = () => {
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'light');
   }, []);
   return null;
 };

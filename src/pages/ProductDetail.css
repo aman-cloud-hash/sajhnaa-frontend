@@ -101,7 +101,7 @@
 }
 
 .product-detail__wishlist-overlay:hover {
-    background: rgba(234, 234, 234, 0.2);
+    background: rgba(195, 161, 110, 0.2);
     border-color: var(--accent-primary);
     transform: scale(1.1);
 }
@@ -466,7 +466,7 @@
 
 .fbt-card--main {
     border-color: var(--accent-primary);
-    background: rgba(234, 234, 234, 0.05);
+    background: rgba(195, 161, 110, 0.05);
 }
 
 .fbt-card__img-container {

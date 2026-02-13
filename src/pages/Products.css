@@ -191,7 +191,7 @@
 .filter-rating__btn--active {
     border-color: var(--accent-primary);
     color: var(--accent-primary);
-    background: rgba(234, 234, 234, 0.1);
+    background: rgba(195, 161, 110, 0.1);
 }
 
 .filter-rating__star {
@@ -222,7 +222,7 @@
 .filter-color-btn--active {
     border-color: var(--accent-primary);
     color: var(--accent-primary);
-    background: rgba(234, 234, 234, 0.1);
+    background: rgba(195, 161, 110, 0.1);
 }
 
 /* Toolbar */
@@ -294,8 +294,8 @@
     align-items: center;
     gap: 6px;
     padding: 4px 12px;
-    background: rgba(234, 234, 234, 0.1);
-    border: 1px solid rgba(234, 234, 234, 0.3);
+    background: rgba(195, 161, 110, 0.1);
+    border: 1px solid rgba(195, 161, 110, 0.3);
     border-radius: 20px;
     font-size: 0.78rem;
     color: var(--accent-primary);

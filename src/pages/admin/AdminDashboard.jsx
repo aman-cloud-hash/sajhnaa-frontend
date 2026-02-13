@@ -30,7 +30,7 @@ const AdminDashboard = () => {
             title: 'Total Sales',
             value: `₹${totalSales.toLocaleString()}`,
             icon: <FiDollarSign />,
-            color: '#eaeaea',
+            color: '#c3a16e',
             description: 'Lifetime income'
         },
         {

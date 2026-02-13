@@ -20,7 +20,7 @@
     right: -10%;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(234, 234, 234, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(195, 161, 110, 0.1) 0%, transparent 70%);
     filter: blur(60px);
     z-index: 0;
 }
@@ -32,7 +32,7 @@
     left: -10%;
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(234, 234, 234, 0.05) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(195, 161, 110, 0.05) 0%, transparent 70%);
     filter: blur(40px);
     z-index: 0;
 }
@@ -155,7 +155,7 @@
     outline: none;
     border-color: var(--accent-primary);
     background: var(--bg-card);
-    box-shadow: 0 0 0 4px rgba(234, 234, 234, 0.1);
+    box-shadow: 0 0 0 4px rgba(195, 161, 110, 0.1);
 }
 
 .auth-form-options {

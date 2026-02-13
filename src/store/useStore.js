@@ -36,7 +36,7 @@ const useStore = create(
   persist(
     (set, get) => ({
       // Dark Mode
-      darkMode: true,
+      darkMode: false,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
 
       // User Authentication
