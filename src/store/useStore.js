@@ -11,7 +11,8 @@ import {
   query,
   orderBy,
   setDoc,
-  getDoc
+  getDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import {
   createUserWithEmailAndPassword,
@@ -164,21 +165,85 @@ const useStore = create(
         return unsubscribe;
       },
 
-      // Products (Admin)
+      // Products (Admin & Catalog)
       products: initialProducts,
-      addProduct: (product) => {
-        set((state) => ({ products: [...state.products, { ...product, id: Date.now() }] }));
-        get().addNotification?.('Product Added', `${product.name} has been added to catalog.`, 'success');
+      productsLoading: true,
+      fetchProducts: () => {
+        try {
+          const q = query(collection(db, 'products'));
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            if (querySnapshot.empty) {
+              set({ products: initialProducts, productsLoading: false });
+              return;
+            }
+            const productsData = [];
+            querySnapshot.forEach((doc) => {
+              productsData.push({ ...doc.data(), firebaseId: doc.id });
+            });
+            set({ products: productsData, productsLoading: false });
+          }, (error) => {
+            console.error("Products Sync Error:", error);
+            set({ productsLoading: false });
+          });
+          return unsubscribe;
+        } catch (error) {
+          console.error("Fetch Products Error:", error);
+          set({ productsLoading: false });
+          return () => { };
+        }
       },
-      updateProduct: (id, updatedData) => {
-        set((state) => ({
-          products: state.products.map((p) => (p.id === id ? { ...p, ...updatedData } : p)),
-        }));
-        get().addNotification?.('Product Updated', 'Product details have been saved.', 'success');
+      addProduct: async (product) => {
+        try {
+          const newProduct = { ...product, id: product.id || Date.now(), createdAt: new Date().toISOString() };
+          await addDoc(collection(db, 'products'), newProduct);
+          get().addNotification?.('Product Added', `${product.name} has been added.`, 'success');
+        } catch (error) {
+          console.error("Error adding product:", error);
+          get().addNotification?.('Error', 'Failed to add product.', 'error');
+        }
       },
-      deleteProduct: (id) => {
-        set((state) => ({ products: state.products.filter((p) => p.id !== id) }));
-        get().addNotification?.('Product Deleted', 'Product has been removed from catalog.', 'info');
+      updateProduct: async (id, updatedData) => {
+        try {
+          const product = get().products.find(p => p.id === id || p.firebaseId === id);
+          if (product?.firebaseId) {
+            await updateDoc(doc(db, 'products', product.firebaseId), updatedData);
+            get().addNotification?.('Product Updated', 'Changes saved successfully.', 'success');
+          }
+        } catch (error) {
+          console.error("Error updating product:", error);
+        }
+      },
+      deleteProduct: async (id) => {
+        try {
+          const product = get().products.find(p => p.id === id || p.firebaseId === id);
+          if (product?.firebaseId) {
+            await deleteDoc(doc(db, 'products', product.firebaseId));
+            get().addNotification?.('Product Deleted', 'Product removed.', 'info');
+          }
+        } catch (error) {
+          console.error("Error deleting product:", error);
+        }
+      },
+
+      // Customers (Admin)
+      customers: [],
+      fetchCustomers: () => {
+        try {
+          const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const customersData = [];
+            querySnapshot.forEach((doc) => {
+              customersData.push({ ...doc.data(), firebaseId: doc.id });
+            });
+            set({ customers: customersData });
+          }, (error) => {
+            console.error("Customers Sync Error:", error);
+          });
+          return unsubscribe;
+        } catch (error) {
+          console.error("Fetch Customers Error:", error);
+          return () => { };
+        }
       },
 
       // Cart

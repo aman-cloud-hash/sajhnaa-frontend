@@ -15,14 +15,21 @@ import useStore from '../../store/useStore';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
-    const { adminLogout, fetchOrders } = useStore();
+    const { adminLogout, fetchOrders, fetchProducts, fetchCustomers } = useStore();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     React.useEffect(() => {
-        const unsubscribe = fetchOrders();
-        return () => unsubscribe();
-    }, [fetchOrders]);
+        const unsubscribeOrders = fetchOrders();
+        const unsubscribeProducts = fetchProducts();
+        const unsubscribeCustomers = fetchCustomers();
+
+        return () => {
+            unsubscribeOrders();
+            unsubscribeProducts();
+            unsubscribeCustomers();
+        };
+    }, [fetchOrders, fetchProducts, fetchCustomers]);
 
     const handleLogout = () => {
         adminLogout();

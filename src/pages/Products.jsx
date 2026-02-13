@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiGrid, FiList, FiX, FiChevronDown, FiStar, FiSliders } from 'react-icons/fi';
@@ -9,9 +9,14 @@ import './Products.css';
 
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const { filters, setFilters, resetFilters, products } = useStore();
+    const { filters, setFilters, resetFilters, products, fetchProducts } = useStore();
     const [viewMode, setViewMode] = useState('grid');
     const [showFilters, setShowFilters] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = fetchProducts();
+        return () => unsubscribe();
+    }, [fetchProducts]);
 
     const categoryParam = searchParams.get('category') || 'all';
     const activeCategory = categoryParam;
