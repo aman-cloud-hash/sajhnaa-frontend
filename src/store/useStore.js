@@ -225,6 +225,29 @@ const useStore = create(
         }
       },
 
+      // Filters (Product Catalog)
+      filters: {
+        searchQuery: '',
+        priceRange: [0, 100000],
+        rating: 0,
+        colors: [],
+        sizes: [],
+        sortBy: 'featured'
+      },
+      setFilters: (newFilters) => set((state) => ({
+        filters: { ...state.filters, ...newFilters }
+      })),
+      resetFilters: () => set({
+        filters: {
+          searchQuery: '',
+          priceRange: [0, 100000],
+          rating: 0,
+          colors: [],
+          sizes: [],
+          sortBy: 'featured'
+        }
+      }),
+
       // Customers (Admin)
       customers: [],
       fetchCustomers: () => {

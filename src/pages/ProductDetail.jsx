@@ -4,15 +4,22 @@ import { motion } from 'framer-motion';
 import { FiHeart, FiShoppingBag, FiStar, FiTruck, FiShield, FiRefreshCw, FiShare2, FiChevronRight, FiMinus, FiPlus, FiCheck } from 'react-icons/fi';
 import FadeIn from '../components/FadeIn';
 import ProductCard from '../components/ProductCard';
-import { products, getRecommendations, getFrequentlyBought } from '../data/products';
+import { products as initialProducts, getRecommendations, getFrequentlyBought } from '../data/products';
 import useStore from '../store/useStore';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const product = products.find(p => p.id === parseInt(id));
-    const { addToCart, removeFromCart, addToWishlist, removeFromWishlist, isInWishlist, addToRecentlyViewed } = useStore();
+    const { products: storeProducts, addToCart, removeFromCart, addToWishlist, removeFromWishlist, isInWishlist, addToRecentlyViewed, fetchProducts } = useStore();
+
+    // Find product in store products
+    const product = storeProducts?.find(p => p.id === parseInt(id) || p.id === id || p.firebaseId === id);
+
+    useEffect(() => {
+        const unsubscribe = fetchProducts();
+        return () => unsubscribe();
+    }, [fetchProducts]);
 
     const [selectedColor, setSelectedColor] = useState(0);
     const [selectedSize, setSelectedSize] = useState(0);

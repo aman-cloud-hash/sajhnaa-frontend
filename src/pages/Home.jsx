@@ -5,15 +5,15 @@ import { MeshDistortMaterial, Float, Environment, Sparkles, useTexture } from '@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FiArrowRight, FiAward, FiRefreshCw, FiShield, FiTruck, FiStar, FiHeart } from 'react-icons/fi';
 import ProductCard from '../components/ProductCard';
-import { products, categories } from '../data/products';
+import { categories } from '../data/products';
+import useStore from '../store/useStore';
 import './Home.css';
 import FadeIn from '../components/FadeIn';
 
 // 3D Ring for jewelry e-commerce
-const HeroGem = () => {
+const HeroGem = ({ product }) => {
     const ringRef = useRef();
     const diamondRef = useRef();
-    const product = products[0]; // Bestseller Ring
 
     // Safety check for image
     const imageUrl = product?.image || 'https://images.unsplash.com/photo-1605100804763-047af5fef207?q=80&w=500&auto=format&fit=crop';
@@ -84,9 +84,8 @@ const HeroGem = () => {
     );
 };
 
-const BridalGem = () => {
-    const bridalProduct = products.find(p => p.badge === 'Bridal') || products[0];
-    const texture = useTexture(bridalProduct.image);
+const BridalGem = ({ product }) => {
+    const texture = useTexture(product?.image || 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1000&auto=format&fit=crop');
 
     return (
         <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
@@ -105,13 +104,22 @@ const BridalGem = () => {
 
 const Home = () => {
     const heroRef = useRef(null);
+    const { products: storeProducts, fetchProducts } = useStore();
+
+    useEffect(() => {
+        const unsubscribe = fetchProducts();
+        return () => unsubscribe();
+    }, [fetchProducts]);
+
     const { scrollYProgress } = useScroll();
     const heroY = useTransform(scrollYProgress, [0, 0.3], [0, -100]);
     const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
 
+    const products = storeProducts || [];
     const trending = products.filter(p => p.badge === 'Bestseller' || p.badge === 'Trending' || p.badge === 'Popular');
     const newArrivals = products.filter(p => p.badge === 'New Arrival' || p.badge === 'New');
     const bridal = products.filter(p => p.badge === 'Bridal' || p.badge === 'Heritage' || p.badge === 'Premium');
+    const bridalProduct = products.find(p => p.badge === 'Bridal') || products[0];
 
     return (
         <div className="home">

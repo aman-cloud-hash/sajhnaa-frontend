@@ -9,7 +9,7 @@ import './Products.css';
 
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const { filters, setFilters, resetFilters, products, fetchProducts } = useStore();
+    const { filters = {}, setFilters, resetFilters, products = [], fetchProducts, productsLoading } = useStore();
     const [viewMode, setViewMode] = useState('grid');
     const [showFilters, setShowFilters] = useState(false);
 
@@ -18,8 +18,7 @@ const Products = () => {
         return () => unsubscribe();
     }, [fetchProducts]);
 
-    const categoryParam = searchParams.get('category') || 'all';
-    const activeCategory = categoryParam;
+    const activeCategory = searchParams.get('category') || 'all';
 
     const sortOptions = [
         { value: 'featured', label: 'Featured' },
@@ -30,10 +29,11 @@ const Products = () => {
         { value: 'name', label: 'Name A-Z' },
     ];
 
-    const allColors = [...new Set(products.flatMap(p => p.colorNames))];
-    const allSizes = [...new Set(products.flatMap(p => p.sizes))];
+    const allColors = [...new Set(products.flatMap(p => p.colorNames || []))];
+    const allSizes = [...new Set(products.flatMap(p => p.sizes || []))];
 
     const filteredProducts = useMemo(() => {
+        if (!products) return [];
         let result = [...products];
 
         // Category
@@ -42,48 +42,59 @@ const Products = () => {
         }
 
         // Search
-        if (filters.searchQuery) {
+        if (filters?.searchQuery) {
             const q = filters.searchQuery.toLowerCase();
             result = result.filter(p =>
-                p.name.toLowerCase().includes(q) ||
-                p.category.toLowerCase().includes(q) ||
-                p.description.toLowerCase().includes(q)
+                p.name?.toLowerCase().includes(q) ||
+                p.category?.toLowerCase().includes(q) ||
+                p.description?.toLowerCase().includes(q)
             );
         }
 
         // Price Range
-        result = result.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
+        if (filters?.priceRange) {
+            result = result.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
+        }
 
         // Rating
-        if (filters.rating > 0) {
+        if (filters?.rating > 0) {
             result = result.filter(p => p.rating >= filters.rating);
         }
 
         // Colors
-        if (filters.colors.length > 0) {
-            result = result.filter(p => p.colorNames.some(c => filters.colors.includes(c)));
+        if (filters?.colors?.length > 0) {
+            result = result.filter(p => p.colorNames?.some(c => filters.colors.includes(c)));
         }
 
         // Sizes
-        if (filters.sizes.length > 0) {
-            result = result.filter(p => p.sizes.some(s => filters.sizes.includes(s)));
+        if (filters?.sizes?.length > 0) {
+            result = result.filter(p => p.sizes?.some(s => filters.sizes.includes(s)));
         }
 
         // Sort
-        switch (filters.sortBy) {
+        const safeSortBy = filters?.sortBy || 'featured';
+        switch (safeSortBy) {
             case 'price-asc': result.sort((a, b) => a.price - b.price); break;
             case 'price-desc': result.sort((a, b) => b.price - a.price); break;
             case 'rating': result.sort((a, b) => b.rating - a.rating); break;
-            case 'name': result.sort((a, b) => a.name.localeCompare(b.name)); break;
-            case 'newest': result.sort((a, b) => b.id - a.id); break;
+            case 'name': result.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
+            case 'newest':
+                result.sort((a, b) => {
+                    const dateA = new Date(a.createdAt || 0).getTime();
+                    const dateB = new Date(b.createdAt || 0).getTime();
+                    if (dateA !== dateB) return dateB - dateA;
+                    // Fallback to numeric ID if available
+                    return (typeof b.id === 'number' && typeof a.id === 'number') ? b.id - a.id : 0;
+                });
+                break;
             default: break;
         }
 
         return result;
     }, [activeCategory, filters, products]);
 
-    const hasActiveFilters = filters.rating > 0 || filters.colors.length > 0 || filters.sizes.length > 0 || filters.priceRange[0] > 0 || filters.priceRange[1] < 100000;
-    const activeFilterCount = (filters.rating > 0 ? 1 : 0) + filters.colors.length + filters.sizes.length + (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000 ? 1 : 0);
+    const hasActiveFilters = filters?.rating > 0 || (filters?.colors?.length || 0) > 0 || (filters?.sizes?.length || 0) > 0 || (filters?.priceRange && (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000));
+    const activeFilterCount = (filters?.rating > 0 ? 1 : 0) + (filters?.colors?.length || 0) + (filters?.sizes?.length || 0) + (filters?.priceRange && (filters.priceRange[0] > 0 || filters.priceRange[1] < 100000) ? 1 : 0);
 
     return (
         <div className="products-page">
