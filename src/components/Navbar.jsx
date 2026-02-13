@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingBag, FiHeart, FiUser, FiSearch, FiMenu, FiX } from 'react-icons/fi';
 import useStore from '../store/useStore';
 import SearchOverlay from './SearchOverlay';
+import logoImg from '../assets/IMG_20260214_012424.png';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -76,8 +77,7 @@ const Navbar = () => {
 
                     {/* Logo */}
                     <Link to="/" className="navbar__logo" aria-label="Sajhnaa Home">
-                        <span className="navbar__logo-text">SAJHNAA</span>
-                        <span className="navbar__logo-dot"></span>
+                        <img src={logoImg} alt="Sajhnaa" className="navbar__logo-img" />
                     </Link>
 
                     {/* Nav Links */}

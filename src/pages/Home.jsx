@@ -134,6 +134,8 @@ const Home = () => {
                     <div className="hero__overlay" />
                 </div>
 
+
+
                 <motion.div className="hero__content container" style={{ y: heroY, opacity: heroOpacity }}>
                     <motion.span
                         className="hero__label"
