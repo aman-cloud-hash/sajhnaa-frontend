@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiSearch, FiPackage, FiCheck, FiTruck, FiMapPin, FiCopy, FiChevronDown } from 'react-icons/fi';
@@ -7,9 +7,14 @@ import './OrderTracking.css';
 
 const OrderTracking = () => {
     const [searchParams] = useSearchParams();
-    const { orders, addNotification } = useStore();
+    const { orders, addNotification, fetchOrders } = useStore();
     const [searchId, setSearchId] = useState(searchParams.get('id') || '');
     const [expandedOrder, setExpandedOrder] = useState(searchParams.get('id') || null);
+
+    useEffect(() => {
+        const unsubscribe = fetchOrders();
+        return () => unsubscribe();
+    }, [fetchOrders]);
 
     const displayOrders = searchId
         ? orders.filter(o => o.id.toLowerCase().includes(searchId.toLowerCase()))
@@ -101,7 +106,7 @@ const OrderTracking = () => {
                                         <span className={`badge badge-${order.status === 'delivered' ? 'success' : order.status === 'shipped' ? 'info' : 'warning'}`}>
                                             {order.status}
                                         </span>
-                                        <span className="tracking-order__total">\u20b9{order.total.toLocaleString()}</span>
+                                        <span className="tracking-order__total">₹{order.total.toLocaleString()}</span>
                                         <FiChevronDown className={`tracking-order__chevron ${expandedOrder === order.id ? 'tracking-order__chevron--open' : ''}`} />
                                     </div>
                                 </button>

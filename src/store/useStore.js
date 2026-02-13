@@ -1,6 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { products as initialProducts } from '../data/products';
+import { db } from '../firebase';
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  updateDoc,
+  doc,
+  query,
+  orderBy
+} from 'firebase/firestore';
 
 const generateOrderId = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -106,47 +116,7 @@ const useStore = create(
       },
 
       // Orders
-      orders: [
-        {
-          id: 'SJ-A7K2M9P1',
-          date: '2026-02-13',
-          customerName: 'Amit Patel',
-          customerEmail: 'amit.patel@example.com',
-          status: 'delivered',
-          items: [
-            { id: 1, name: 'Eternal Solitaire Ring', price: 45999, quantity: 1, image: 'https://images.unsplash.com/photo-1605100804763-047af5fef207?q=80&w=1000&auto=format&fit=crop' },
-          ],
-          total: 45999,
-          shippingAddress: { name: 'Amit Patel', city: 'Mumbai', state: 'Maharashtra' },
-          trackingSteps: [
-            { label: 'Order Placed', date: '2026-02-10', completed: true },
-            { label: 'Crafting & QC', date: '2026-02-10', completed: true },
-            { label: 'Shipped', date: '2026-02-11', completed: true },
-            { label: 'Out for Delivery', date: '2026-02-12', completed: true },
-            { label: 'Delivered', date: '2026-02-12', completed: true },
-          ],
-        },
-        {
-          id: 'SJ-B4N9Q8W5',
-          date: '2026-02-13',
-          customerName: 'Sneha Rao',
-          customerEmail: 'sneha.rao@example.com',
-          status: 'shipped',
-          items: [
-            { id: 5, name: 'Lustrous Pearl Earrings', price: 28499, quantity: 1, image: 'https://images.unsplash.com/photo-1535633302704-c02995a32730?q=80&w=1000&auto=format&fit=crop' },
-            { id: 8, name: 'Gold Bangle Set', price: 72500, quantity: 1, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1520a?q=80&w=1000&auto=format&fit=crop' },
-          ],
-          total: 100999,
-          shippingAddress: { name: 'Sneha Rao', city: 'Bangalore', state: 'Karnataka' },
-          trackingSteps: [
-            { label: 'Order Placed', date: '2026-02-12', completed: true },
-            { label: 'Crafting & QC', date: '2026-02-12', completed: true },
-            { label: 'Shipped', date: '2026-02-13', completed: true },
-            { label: 'Out for Delivery', date: '', completed: false },
-            { label: 'Delivered', date: '', completed: false },
-          ],
-        },
-      ],
+      orders: [],
       placeOrder: (shippingAddress, paymentMethod) => {
         const cart = get().cart;
         const total = get().getCartTotal();
@@ -157,6 +127,7 @@ const useStore = create(
           date: today,
           customerName: shippingAddress.name,
           customerEmail: shippingAddress.email || get().user?.email || 'guest@example.com',
+          city: shippingAddress.city || 'Unknown',
           status: 'processing',
           items: cart.map((item) => ({
             id: item.id,
@@ -177,48 +148,72 @@ const useStore = create(
             { label: 'Out for Delivery', date: '', completed: false },
             { label: 'Delivered', date: '', completed: false },
           ],
+          createdAt: new Date().toISOString()
         };
-        set({ orders: [newOrder, ...get().orders], cart: [] });
+
+        // Sync to Firebase
+        try {
+          addDoc(collection(db, 'orders'), newOrder);
+        } catch (error) {
+          console.error("Error adding order to Firebase: ", error);
+        }
+
+        set({ cart: [] });
         get().addNotification('Order Placed!', `Your order ${orderId} has been confirmed.`, 'success');
         return orderId;
       },
-      updateOrderStatus: (orderId, newStatus) => {
+      // Initialize Firebase Listeners
+      fetchOrders: () => {
+        const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const orders = [];
+          querySnapshot.forEach((doc) => {
+            orders.push({ ...doc.data(), firebaseId: doc.id });
+          });
+          set({ orders });
+        });
+        return unsubscribe;
+      },
+      updateOrderStatus: async (orderId, newStatus) => {
         const today = new Date().toISOString().split('T')[0];
+        const order = get().orders.find(o => o.id === orderId);
 
-        set((state) => ({
-          orders: state.orders.map((order) => {
-            if (order.id !== orderId) return order;
+        if (!order) return;
 
-            // Deep clone tracking steps
-            let updatedSteps = order.trackingSteps.map(step => ({ ...step }));
+        // Deep clone tracking steps
+        let updatedSteps = order.trackingSteps.map(step => ({ ...step }));
 
-            // Helper to update a specific step
-            const markComplete = (labelPattern, date) => {
-              const step = updatedSteps.find(s => s.label.toLowerCase().includes(labelPattern.toLowerCase()));
-              if (step && !step.completed) {
-                step.completed = true;
-                step.date = date;
-              }
-            };
+        // Helper to update a specific step
+        const markComplete = (labelPattern, date) => {
+          const step = updatedSteps.find(s => s.label.toLowerCase().includes(labelPattern.toLowerCase()));
+          if (step && !step.completed) {
+            step.completed = true;
+            step.date = date;
+          }
+        };
 
-            // Enhanced Logic: Automatically complete previous steps based on status
-            if (newStatus === 'shipped') {
-              markComplete('shipped', today);
-            } else if (newStatus === 'delivered') {
-              // Ensure shipped is marked if jumped directly to delivered
-              markComplete('shipped', order.trackingSteps.find(s => s.label.toLowerCase().includes('shipped'))?.date || today);
-              markComplete('out for delivery', today);
-              markComplete('delivered', today);
-            } else if (newStatus === 'cancelled') {
-              // Add a cancelled step or update status to show cancelled
-              // For now, simpler to just rely on status badge, but we could append a step.
-              // Letting basic status handle 'cancelled' visual.
-            }
+        if (newStatus === 'shipped') {
+          markComplete('shipped', today);
+        } else if (newStatus === 'delivered') {
+          markComplete('shipped', order.trackingSteps.find(s => s.label.toLowerCase().includes('shipped'))?.date || today);
+          markComplete('out for delivery', today);
+          markComplete('delivered', today);
+        }
 
-            return { ...order, status: newStatus, trackingSteps: updatedSteps };
-          }),
-        }));
-        get().addNotification('Order Updated', `Order #${orderId} marked as ${newStatus}. Customer tracking updated.`, 'success');
+        // Update Firebase
+        if (order.firebaseId) {
+          try {
+            const orderRef = doc(db, 'orders', order.firebaseId);
+            await updateDoc(orderRef, {
+              status: newStatus,
+              trackingSteps: updatedSteps
+            });
+            get().addNotification('Order Updated', `Order #${orderId} marked as ${newStatus}.`, 'success');
+          } catch (error) {
+            console.error("Error updating order: ", error);
+            get().addNotification('Error', 'Failed to update order in database.', 'error');
+          }
+        }
       },
 
       // Promo Codes
@@ -290,14 +285,7 @@ const useStore = create(
     {
       name: 'sajhnaa-store',
       partialize: (state) => ({
-        cart: state.cart,
-        wishlist: state.wishlist,
-        orders: state.orders,
         darkMode: state.darkMode,
-        recentlyViewed: state.recentlyViewed,
-        savedForLater: state.savedForLater,
-        savedForLater: state.savedForLater,
-        user: state.user,
         adminAuthenticated: state.adminAuthenticated,
       }),
     }
