@@ -32,43 +32,42 @@ const useStore = create(
       isAuthenticated: false,
       user: null,
       login: (email, password) => {
-        // Simple mock login
         const mockUser = { name: 'Jewelry Lover', email };
         set({ isAuthenticated: true, user: mockUser });
-        get().addNotification('Welcome back!', `Signed in as ${email}`, 'success');
+        get().addNotification?.('Welcome back!', `Signed in as ${email}`, 'success');
         return true;
       },
       register: (userData) => {
         set({ isAuthenticated: true, user: userData });
-        get().addNotification('Account Created', 'Welcome to Sajhnaa!', 'success');
+        get().addNotification?.('Account Created', 'Welcome to Sajhnaa!', 'success');
         return true;
       },
       logout: () => {
         set({ isAuthenticated: false, user: null });
-        get().addNotification('Signed Out', 'See you soon!', 'info');
+        get().addNotification?.('Signed Out', 'See you soon!', 'info');
       },
 
       // Products (Admin)
       products: initialProducts,
       addProduct: (product) => {
         set((state) => ({ products: [...state.products, { ...product, id: Date.now() }] }));
-        get().addNotification('Product Added', `${product.name} has been added to catalog.`, 'success');
+        get().addNotification?.('Product Added', `${product.name} has been added to catalog.`, 'success');
       },
       updateProduct: (id, updatedData) => {
         set((state) => ({
           products: state.products.map((p) => (p.id === id ? { ...p, ...updatedData } : p)),
         }));
-        get().addNotification('Product Updated', 'Product details have been saved.', 'success');
+        get().addNotification?.('Product Updated', 'Product details have been saved.', 'success');
       },
       deleteProduct: (id) => {
         set((state) => ({ products: state.products.filter((p) => p.id !== id) }));
-        get().addNotification('Product Deleted', 'Product has been removed from catalog.', 'info');
+        get().addNotification?.('Product Deleted', 'Product has been removed from catalog.', 'info');
       },
 
       // Cart
       cart: [],
       addToCart: (product, quantity = 1, selectedSize = null, selectedColor = null) => {
-        const cart = get().cart;
+        const cart = get().cart || [];
         const existingIndex = cart.findIndex(
           (item) => item.id === product.id && item.selectedSize === selectedSize && item.selectedColor === selectedColor
         );
@@ -81,22 +80,22 @@ const useStore = create(
             cart: [...cart, { ...product, quantity, selectedSize, selectedColor }],
           });
         }
-        get().addNotification('Added to cart', `${product.name} has been added to your cart.`, 'success');
+        get().addNotification?.('Added to cart', `${product.name} has been added to your cart.`, 'success');
       },
       removeFromCart: (productId, selectedSize, selectedColor) => {
         set({
-          cart: get().cart.filter(
+          cart: (get().cart || []).filter(
             (item) => !(item.id === productId && item.selectedSize === selectedSize && item.selectedColor === selectedColor)
           ),
         });
       },
       updateCartQuantity: (productId, selectedSize, selectedColor, quantity) => {
         if (quantity <= 0) {
-          get().removeFromCart(productId, selectedSize, selectedColor);
+          get().removeFromCart?.(productId, selectedSize, selectedColor);
           return;
         }
         set({
-          cart: get().cart.map((item) =>
+          cart: (get().cart || []).map((item) =>
             item.id === productId && item.selectedSize === selectedSize && item.selectedColor === selectedColor
               ? { ...item, quantity }
               : item
@@ -105,38 +104,38 @@ const useStore = create(
       },
       clearCart: () => set({ cart: [] }),
       getCartTotal: () => {
-        return get().cart.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
+        return (get().cart || []).reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
       },
       getCartCount: () => {
-        return get().cart.reduce((count, item) => count + item.quantity, 0);
+        return (get().cart || []).reduce((count, item) => count + item.quantity, 0);
       },
 
       // Saved for Later
       savedForLater: [],
       saveForLater: (product) => {
-        const saved = get().savedForLater;
+        const saved = get().savedForLater || [];
         if (!saved.find((item) => item.id === product.id)) {
           set({ savedForLater: [...saved, product] });
-          get().removeFromCart(product.id, product.selectedSize, product.selectedColor);
+          get().removeFromCart?.(product.id, product.selectedSize, product.selectedColor);
         }
       },
       moveToCart: (product) => {
-        get().addToCart(product);
-        set({ savedForLater: get().savedForLater.filter((item) => item.id !== product.id) });
+        get().addToCart?.(product);
+        set({ savedForLater: (get().savedForLater || []).filter((item) => item.id !== product.id) });
       },
 
       // Wishlist
       wishlist: [],
       addToWishlist: (product) => {
-        const wishlist = get().wishlist;
+        const wishlist = get().wishlist || [];
         if (!wishlist.find((item) => item.id === product.id)) {
           set({ wishlist: [...wishlist, product] });
-          get().addNotification('Success', 'Item added to wishlist.', 'success');
+          get().addNotification?.('Success', 'Item added to wishlist.', 'success');
         }
       },
       removeFromWishlist: (productId) => {
-        set({ wishlist: get().wishlist.filter((item) => item.id !== productId) });
-        get().addNotification('Removed', 'Item removed from wishlist.', 'info');
+        set({ wishlist: (get().wishlist || []).filter((item) => item.id !== productId) });
+        get().addNotification?.('Removed', 'Item removed from wishlist.', 'info');
       },
       isInWishlist: (productId) => {
         return (get().wishlist || []).some((item) => item.id === productId);
@@ -145,8 +144,8 @@ const useStore = create(
       // Orders
       orders: [],
       placeOrder: (shippingAddress, paymentMethod) => {
-        const cart = get().cart;
-        const total = get().getCartTotal();
+        const cart = get().cart || [];
+        const total = get().getCartTotal?.() || 0;
         const orderId = generateOrderId();
         const today = new Date().toISOString().split('T')[0];
         const newOrder = {
@@ -178,7 +177,6 @@ const useStore = create(
           createdAt: new Date().toISOString()
         };
 
-        // Sync to Firebase
         try {
           addDoc(collection(db, 'orders'), newOrder);
         } catch (error) {
@@ -186,10 +184,9 @@ const useStore = create(
         }
 
         set({ cart: [] });
-        get().addNotification('Order Placed!', `Your order ${orderId} has been confirmed.`, 'success');
+        get().addNotification?.('Order Placed!', `Your order ${orderId} has been confirmed.`, 'success');
         return orderId;
       },
-      // Initialize Firebase Listeners
       fetchOrders: () => {
         const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -203,14 +200,12 @@ const useStore = create(
       },
       updateOrderStatus: async (orderId, newStatus) => {
         const today = new Date().toISOString().split('T')[0];
-        const order = get().orders.find(o => o.id === orderId);
+        const order = (get().orders || []).find(o => o.id === orderId);
 
         if (!order) return;
 
-        // Deep clone tracking steps
         let updatedSteps = (order.trackingSteps || []).map(step => ({ ...step }));
 
-        // Helper to update a specific step
         const markComplete = (labelPattern, date) => {
           const step = updatedSteps.find(s => s.label.toLowerCase().includes(labelPattern.toLowerCase()));
           if (step && !step.completed) {
@@ -227,7 +222,6 @@ const useStore = create(
           markComplete('delivered', today);
         }
 
-        // Update Firebase
         if (order.firebaseId) {
           try {
             const orderRef = doc(db, 'orders', order.firebaseId);
@@ -235,82 +229,54 @@ const useStore = create(
               status: newStatus,
               trackingSteps: updatedSteps
             });
-            get().addNotification('Order Updated', `Order #${orderId} marked as ${newStatus}.`, 'success');
+            get().addNotification?.('Order Updated', `Order #${orderId} marked as ${newStatus}.`, 'success');
           } catch (error) {
             console.error("Error updating order: ", error);
-            get().addNotification('Error', 'Failed to update order in database.', 'error');
+            get().addNotification?.('Error', 'Failed to update order in database.', 'error');
           }
         }
       },
-
-      // Promo Codes
-      // Filters
-      filters: {
-        category: 'all',
-        priceRange: [0, 100000],
-        rating: 0,
-        colors: [],
-        sizes: [],
-        sortBy: 'featured',
-        searchQuery: '',
-      },
-      setFilters: (newFilters) => set({ filters: { ...get().filters, ...newFilters } }),
-      resetFilters: () =>
-        set({
-          filters: {
-            category: 'all',
-            priceRange: [0, 100000],
-            rating: 0,
-            colors: [],
-            sizes: [],
-            sortBy: 'featured',
-            searchQuery: '',
-          },
-        }),
 
       // Notifications
       notifications: [],
       addNotification: (title, message, type = 'info') => {
         const id = Date.now() + Math.random();
-        set({ notifications: [...get().notifications, { id, title, message, type }] });
+        set({ notifications: [...(get().notifications || []), { id, title, message, type }] });
         setTimeout(() => {
-          set({ notifications: get().notifications.filter((n) => n.id !== id) });
+          set({ notifications: (get().notifications || []).filter((n) => n.id !== id) });
         }, 4000);
       },
       removeNotification: (id) => {
-        set({ notifications: get().notifications.filter((n) => n.id !== id) });
+        set({ notifications: (get().notifications || []).filter((n) => n.id !== id) });
       },
 
       // Recently Viewed
       recentlyViewed: [],
       addToRecentlyViewed: (product) => {
-        const recent = get().recentlyViewed.filter((p) => p.id !== product.id);
+        if (!product) return;
+        const recent = (get().recentlyViewed || []).filter((p) => p.id !== product.id);
         set({ recentlyViewed: [product, ...recent].slice(0, 10) });
       },
-
-      // Search
-      searchOpen: false,
-      toggleSearch: () => set((state) => ({ searchOpen: !state.searchOpen })),
 
       // Admin Authentication
       adminAuthenticated: false,
       adminLogin: (password) => {
         if (password === 'shivani@70464') {
           set({ adminAuthenticated: true });
-          get().addNotification('Admin Access Granted', 'Welcome to the Dashboard.', 'success');
+          get().addNotification?.('Admin Access Granted', 'Welcome to the Dashboard.', 'success');
           return true;
         } else {
-          get().addNotification('Access Denied', 'Incorrect password.', 'error');
+          get().addNotification?.('Access Denied', 'Incorrect password.', 'error');
           return false;
         }
       },
       adminLogout: () => {
         set({ adminAuthenticated: false });
-        get().addNotification('Logged Out', 'Admin session ended.', 'info');
+        get().addNotification?.('Logged Out', 'Admin session ended.', 'info');
       },
     }),
     {
-      name: 'sajhnaa-store-v4', // Clear cache again
+      name: 'sajhnaa-store-v5',
       partialize: (state) => ({
         darkMode: state.darkMode,
         adminAuthenticated: state.adminAuthenticated,

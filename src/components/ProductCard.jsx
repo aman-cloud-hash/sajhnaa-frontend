@@ -5,22 +5,31 @@ import useStore from '../store/useStore';
 import './ProductCard.css';
 
 const ProductCard = ({ product, index = 0 }) => {
+    // Safety check for product
+    if (!product) return null;
+
     const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
-    const wishlisted = isInWishlist(product.id);
+
+    // Safely call isInWishlist
+    const wishlisted = typeof isInWishlist === 'function' ? isInWishlist(product.id) : false;
 
     const handleWishlist = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (typeof removeFromWishlist !== 'function' || typeof addToWishlist !== 'function') return;
         wishlisted ? removeFromWishlist(product.id) : addToWishlist(product);
     };
 
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        addToCart(product, 1, product.sizes[0], product.colors[0]);
+        if (typeof addToCart !== 'function') return;
+
+        const size = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : 'Standard';
+        const color = (product.colors && product.colors.length > 0) ? product.colors[0] : 'Gold';
+
+        addToCart(product, 1, size, color);
     };
-
-
 
     return (
         <motion.div
@@ -62,7 +71,7 @@ const ProductCard = ({ product, index = 0 }) => {
 
                     {/* Color Dots */}
                     <div className="product-card__colors">
-                        {product.colors.slice(0, 3).map((color, i) => (
+                        {(product.colors || []).slice(0, 3).map((color, i) => (
                             <span
                                 key={i}
                                 className="product-card__color-dot"
@@ -82,7 +91,7 @@ const ProductCard = ({ product, index = 0 }) => {
                         <span className="product-card__reviews">({product.reviews})</span>
                     </div>
                     <div className="product-card__pricing">
-                        <span className="product-card__price">₹{product.price.toLocaleString()}</span>
+                        <span className="product-card__price">₹{(product.price || 0).toLocaleString()}</span>
                         <button className="product-card__buy-btn" onClick={handleAddToCart}>
                             Buy Now
                         </button>
