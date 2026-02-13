@@ -80,46 +80,52 @@ const useStore = create(
       register: async (userData) => {
         try {
           const { email, password, name } = userData;
+
+          // 1. Create User in Firebase Auth
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
 
-          // Update Firebase Auth Profile
+          // 2. Update Auth Profile
           await updateProfile(user, { displayName: name });
 
-          // Save User Data to Firestore Database
           const userProfile = {
             uid: user.uid,
             name,
             email,
             createdAt: new Date().toISOString(),
-            addresses: [],
-            phone: '',
-            preferences: {
-              newsletter: true,
-              smsAlerts: false,
-              twoFactorAuth: false
-            }
           };
 
-          await setDoc(doc(db, 'users', user.uid), userProfile);
+          // 3. Try saving to Firestore (Non-blocking)
+          try {
+            await setDoc(doc(db, 'users', user.uid), {
+              ...userProfile,
+              preferences: { newsletter: true, smsAlerts: false }
+            });
+          } catch (dbError) {
+            console.error("Firestore Save Error:", dbError);
+          }
 
           set({
             isAuthenticated: true,
             user: userProfile
           });
-          get().addNotification?.('Account Created', `Greetings, ${name}! Your account is ready.`, 'success');
+
+          get().addNotification?.('Success!', `Welcome, ${name}! Your account is active.`, 'success');
           return { success: true };
+
         } catch (error) {
-          console.error("Registration error details:", error);
-          let message = 'Registration failed.';
+          console.error("Firebase Auth Error:", error);
+          let message = error.message;
+
           if (error.code === 'auth/email-already-in-use') {
-            message = 'This email is already registered. Try logging in.';
+            message = 'This email is already in use. Please login.';
           } else if (error.code === 'auth/weak-password') {
-            message = 'Password should be at least 6 characters.';
+            message = 'Password is too weak. Use at least 6 characters.';
           } else if (error.code === 'auth/operation-not-allowed') {
-            message = 'Email/Password registration is not enabled in Firebase. Please enable it.';
+            message = 'Email/Password login is not enabled in Firebase Console.';
           }
-          get().addNotification?.('Registration Error', message, 'error');
+
+          get().addNotification?.('Registration Failed', message, 'error');
           return { success: false, error: message };
         }
       },
