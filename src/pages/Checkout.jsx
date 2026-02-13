@@ -27,9 +27,13 @@ const Checkout = () => {
     // Upsell: get suggestions from first cart item
     const upsellItems = cart.length > 0 ? getFrequentlyBought(cart[0].id).filter(p => !cart.find(c => c.id === p.id)) : [];
 
-    const handleSubmit = () => {
-        const orderId = placeOrder(shippingData, paymentData);
-        navigate(`/orders?id=${orderId}`);
+    const handleSubmit = async () => {
+        try {
+            const orderId = await placeOrder(shippingData, paymentData);
+            navigate(`/orders?id=${orderId}`);
+        } catch (error) {
+            console.error("Checkout failed:", error);
+        }
     };
 
     if (cart.length === 0) {

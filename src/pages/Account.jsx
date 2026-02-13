@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiUser, FiMapPin, FiPackage, FiSettings, FiShield, FiLogOut, FiEdit2, FiPlus, FiChevronRight, FiMail, FiPhone } from 'react-icons/fi';
@@ -6,9 +6,14 @@ import useStore from '../store/useStore';
 import './Account.css';
 
 const Account = () => {
-    const { user, orders, updateUser, logout } = useStore();
+    const { user, orders, updateUser, logout, fetchOrders } = useStore();
     const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState('profile');
+
+    useEffect(() => {
+        const unsubscribe = fetchOrders();
+        return () => unsubscribe();
+    }, [fetchOrders]);
 
     const menuItems = [
         { id: 'profile', label: 'Profile', icon: <FiUser /> },

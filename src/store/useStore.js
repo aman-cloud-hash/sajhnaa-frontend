@@ -260,7 +260,7 @@ const useStore = create(
 
       // Orders
       orders: [],
-      placeOrder: (shippingAddress, paymentMethod) => {
+      placeOrder: async (shippingAddress, paymentMethod) => {
         const cart = get().cart || [];
         const total = get().getCartTotal?.() || 0;
         const orderId = generateOrderId();
@@ -268,7 +268,7 @@ const useStore = create(
         const newOrder = {
           id: orderId,
           date: today,
-          customerName: shippingAddress.name,
+          customerName: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
           customerEmail: shippingAddress.email || get().user?.email || 'guest@example.com',
           city: shippingAddress.city || 'Unknown',
           status: 'processing',
@@ -296,25 +296,34 @@ const useStore = create(
         };
 
         try {
-          addDoc(collection(db, 'orders'), newOrder);
+          await addDoc(collection(db, 'orders'), newOrder);
+          set({ cart: [] });
+          get().addNotification?.('Order Placed!', `Your order ${orderId} has been confirmed.`, 'success');
+          return orderId;
         } catch (error) {
           console.error("Error adding order to Firebase: ", error);
+          get().addNotification?.('Order Failed', 'Please try again later.', 'error');
+          throw error;
         }
-
-        set({ cart: [] });
-        get().addNotification?.('Order Placed!', `Your order ${orderId} has been confirmed.`, 'success');
-        return orderId;
       },
       fetchOrders: () => {
-        const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const orders = [];
-          querySnapshot.forEach((doc) => {
-            orders.push({ ...doc.data(), firebaseId: doc.id });
+        try {
+          const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const orders = [];
+            querySnapshot.forEach((doc) => {
+              orders.push({ ...doc.data(), firebaseId: doc.id });
+            });
+            set({ orders });
+          }, (error) => {
+            console.error("Firestore Snapshot Error:", error);
+            get().addNotification?.('Database Error', 'Failed to sync orders data.', 'error');
           });
-          set({ orders });
-        });
-        return unsubscribe;
+          return unsubscribe;
+        } catch (error) {
+          console.error("Fetch Orders Error:", error);
+          return () => { };
+        }
       },
       updateOrderStatus: async (orderId, newStatus) => {
         const today = new Date().toISOString().split('T')[0];
