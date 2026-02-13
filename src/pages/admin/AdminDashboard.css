@@ -125,7 +125,7 @@
 }
 
 .view-all-btn {
-    background: rgba(195, 161, 110, 0.1);
+    background: rgba(234, 234, 234, 0.1);
     border: 1px solid var(--accent-primary);
     color: var(--accent-primary);
     padding: 8px 16px;

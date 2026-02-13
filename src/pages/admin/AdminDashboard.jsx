@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiDollarSign, FiShoppingBag, FiUsers, FiPackage } from 'react-icons/fi';
+import { FiDollarSign, FiShoppingBag, FiUsers, FiPackage, FiRefreshCw } from 'react-icons/fi';
 import useStore from '../../store/useStore';
 import './AdminDashboard.css';
 
@@ -30,7 +30,7 @@ const AdminDashboard = () => {
             title: 'Total Sales',
             value: `₹${totalSales.toLocaleString()}`,
             icon: <FiDollarSign />,
-            color: '#c3a16e',
+            color: '#eaeaea',
             description: 'Lifetime income'
         },
         {
@@ -58,6 +58,16 @@ const AdminDashboard = () => {
 
     const recentOrders = orders.slice(0, 5);
 
+    const [isRefreshing, setIsRefreshing] = React.useState(false);
+    const { refreshOrders } = useStore();
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        // Manual one-time refresh
+        await refreshOrders();
+        setIsRefreshing(false);
+    };
+
     return (
         <div className="admin-dashboard">
             <header className="dashboard-header">
@@ -65,7 +75,17 @@ const AdminDashboard = () => {
                     <h1>Dashboard Overview <span style={{ fontSize: '0.5em', opacity: 0.5 }}>(Live V2.0)</span></h1>
                     <p>Welcome back. Here is your store's live data.</p>
                 </div>
-                <div className="current-date">
+                <div className="current-date" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <motion.button
+                        onClick={handleRefresh}
+                        className="btn-ghost"
+                        style={{ padding: '8px', borderRadius: '50%' }}
+                        animate={{ rotate: isRefreshing ? 360 : 0 }}
+                        transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0, ease: 'linear' }}
+                        title="Refresh Data"
+                    >
+                        <FiRefreshCw />
+                    </motion.button>
                     {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </div>
             </header>

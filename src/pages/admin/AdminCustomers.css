@@ -41,7 +41,7 @@
 .summary-card .icon {
     font-size: 2rem;
     color: var(--accent-primary);
-    background: rgba(195, 161, 110, 0.1);
+    background: rgba(234, 234, 234, 0.1);
     padding: 10px;
     border-radius: 50%;
     width: 50px;

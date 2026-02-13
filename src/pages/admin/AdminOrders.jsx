@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiTruck, FiCheckCircle, FiClock, FiXCircle } from 'react-icons/fi';
+import { FiSearch, FiTruck, FiCheckCircle, FiClock, FiXCircle, FiRefreshCw } from 'react-icons/fi';
 import useStore from '../../store/useStore';
 import './AdminOrders.css';
 
 const AdminOrders = () => {
-    const { orders, updateOrderStatus } = useStore();
+    const { orders, updateOrderStatus, refreshOrders } = useStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
 
@@ -35,6 +35,14 @@ const AdminOrders = () => {
                     <p>Manage and track all customer orders</p>
                 </div>
                 <div className="orders-controls">
+                    <button
+                        className="btn-icon"
+                        onClick={() => refreshOrders()}
+                        title="Refresh Orders"
+                        style={{ width: '40px', height: '40px', border: '1px solid var(--border-color)', background: 'var(--bg-glass)', color: 'var(--text-secondary)' }}
+                    >
+                        <FiRefreshCw />
+                    </button>
                     <div className="search-order">
                         <FiSearch />
                         <input

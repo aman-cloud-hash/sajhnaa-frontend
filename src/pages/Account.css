@@ -85,7 +85,7 @@
 
 .account-sidebar__link--active {
     color: var(--accent-primary);
-    background: rgba(195, 161, 110, 0.1);
+    background: rgba(234, 234, 234, 0.1);
     font-weight: 600;
 }
 

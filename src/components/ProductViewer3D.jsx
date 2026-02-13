@@ -4,7 +4,7 @@ import { OrbitControls, Float, Environment, ContactShadows, useTexture } from '@
 import { FiMove, FiZoomIn } from 'react-icons/fi';
 import './ProductViewer3D.css';
 
-const ProductModel = ({ image, color = '#c3a16e' }) => {
+const ProductModel = ({ image, color = '#eaeaea' }) => {
     const meshRef = useRef();
 
     // Safety fallback for image
@@ -74,12 +74,12 @@ const isWebGLAvailable = () => {
 const LoadingFallback = () => (
     <mesh>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#c3a16e" wireframe />
+        <meshStandardMaterial color="#eaeaea" wireframe />
     </mesh>
 );
 
 const ProductViewer3D = ({ product, miniMode = false }) => {
-    const accentColor = product?.colors?.[0] || '#c3a16e';
+    const accentColor = product?.colors?.[0] || '#eaeaea';
 
     if (!isWebGLAvailable()) {
         return (
@@ -107,7 +107,7 @@ const ProductViewer3D = ({ product, miniMode = false }) => {
                         intensity={1}
                         castShadow
                     />
-                    <pointLight position={[-10, -10, -5]} intensity={0.5} color="#a8834e" />
+                    <pointLight position={[-10, -10, -5]} intensity={0.5} color="#eaeaea" />
 
                     <ProductModel image={product?.image} color={accentColor} />
 

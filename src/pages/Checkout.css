@@ -157,7 +157,7 @@
 
 .checkout-payment-btn--active {
     border-color: var(--accent-primary);
-    background: rgba(195, 161, 110, 0.1);
+    background: rgba(234, 234, 234, 0.1);
 }
 
 /* Review */
@@ -221,7 +221,7 @@
 /* Upsell */
 .checkout-upsell {
     border-color: var(--accent-primary);
-    background: rgba(195, 161, 110, 0.03);
+    background: rgba(234, 234, 234, 0.03);
 }
 
 .checkout-upsell__item {

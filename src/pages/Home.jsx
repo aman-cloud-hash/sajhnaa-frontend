@@ -47,7 +47,7 @@ const HeroGem = ({ product }) => {
                 <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
                     <torusGeometry args={[0.9, 0.08, 16, 64]} />
                     <meshPhysicalMaterial
-                        color="#d4a853"
+                        color="#eaeaea"
                         metalness={0.9}
                         roughness={0.1}
                         envMapIntensity={2}

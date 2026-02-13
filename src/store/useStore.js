@@ -12,6 +12,7 @@ import {
   orderBy,
   setDoc,
   getDoc,
+  getDocs,
   deleteDoc
 } from 'firebase/firestore';
 import {
@@ -419,6 +420,29 @@ const useStore = create(
         } catch (error) {
           console.error("Fetch Orders Error:", error);
           return () => { };
+        }
+      },
+      refreshOrders: async () => {
+        try {
+          const q = query(collection(db, 'orders'));
+          const querySnapshot = await getDocs(q);
+          const ordersData = [];
+          querySnapshot.forEach((doc) => {
+            ordersData.push({ ...doc.data(), firebaseId: doc.id });
+          });
+
+          // Sort in JS to avoid Firestore Index requirements
+          const sortedOrders = ordersData.sort((a, b) => {
+            const timeA = new Date(a.createdAt || a.date || 0).getTime();
+            const timeB = new Date(b.createdAt || b.date || 0).getTime();
+            return timeB - timeA;
+          });
+
+          set({ orders: sortedOrders });
+          get().addNotification?.('Data Refreshed', 'Latest orders fetched successfully.', 'success');
+        } catch (error) {
+          console.error("Refresh Orders Error:", error);
+          get().addNotification?.('Refresh Failed', 'Could not update orders.', 'error');
         }
       },
       updateOrderStatus: async (orderId, newStatus) => {
