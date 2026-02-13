@@ -59,7 +59,7 @@ const Navbar = () => {
     return (
         <>
             <motion.header
-                className={`navbar ${scrolled ? 'navbar--scrolled' : ''} ${visible ? 'navbar--visible' : 'navbar--hidden'}`}
+                className={`navbar ${scrolled ? 'navbar--scrolled' : ''} navbar--visible`}
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ type: 'spring', stiffness: 100, damping: 20 }}

@@ -18,7 +18,7 @@ const FadeIn = ({ children, delay = 0, direction = 'up', fullWidth = false, clas
         <motion.div
             initial={initial}
             whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{
                 duration: 0.7,
                 delay: delay,

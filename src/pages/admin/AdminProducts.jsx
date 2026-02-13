@@ -132,7 +132,6 @@ const AdminProducts = () => {
                                     key={product.id}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
                                     layout
                                 >
                                     <td className="col-image">

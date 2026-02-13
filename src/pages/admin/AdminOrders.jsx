@@ -77,7 +77,6 @@ const AdminOrders = () => {
                                     key={order.id}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
                                     layout
                                 >
                                     <td className="order-id">#{order.id}</td>

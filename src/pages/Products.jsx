@@ -304,7 +304,6 @@ const Products = () => {
                                     className={`products-grid ${viewMode === 'list' ? 'products-grid--list' : ''}`}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
                                 >
                                     {filteredProducts.map((product, i) => (
                                         <ProductCard key={product.id} product={product} index={i} />

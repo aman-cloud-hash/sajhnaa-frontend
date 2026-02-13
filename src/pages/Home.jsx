@@ -113,7 +113,7 @@ const Home = () => {
 
     const { scrollYProgress } = useScroll();
     const heroY = useTransform(scrollYProgress, [0, 0.3], [0, -100]);
-    const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 1]);
 
     const products = storeProducts || [];
     const trending = products.filter(p => p.badge === 'Bestseller' || p.badge === 'Trending' || p.badge === 'Popular');

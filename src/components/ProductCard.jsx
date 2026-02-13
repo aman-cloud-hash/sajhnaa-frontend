@@ -35,7 +35,7 @@ const ProductCard = ({ product, index = 0 }) => {
         <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: "-50px" }}
+            viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: index * 0.05 }}
         >
             <Link to={`/product/${product.id}`} className="product-card" aria-label={`View ${product.name}`}>

@@ -64,7 +64,6 @@ const Cart = () => {
                                     layout
                                     initial={{ opacity: 0, x: -30 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -30, height: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
                                     <Link to={`/product/${item.id}`} className="cart-item__image">
