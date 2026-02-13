@@ -28,8 +28,12 @@ const AdminCustomers = lazy(() => import('./pages/admin/AdminCustomers'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useStore();
+  const { isAuthenticated, authLoading } = useStore();
   const location = useLocation();
+
+  if (authLoading) {
+    return <PageLoader />;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
