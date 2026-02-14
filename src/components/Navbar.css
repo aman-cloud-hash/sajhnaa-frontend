@@ -6,7 +6,7 @@
     z-index: var(--z-sticky);
     padding: 0 var(--space-xl);
     transition: all var(--transition-base), transform 0.3s ease, opacity 0.3s ease;
-    background: rgba(0, 0, 0, 0.15);
+    background: rgb(255, 255, 255);
     backdrop-filter: blur(5px);
 }
 
