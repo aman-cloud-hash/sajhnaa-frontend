@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FiGithub, FiTwitter, FiInstagram, FiMail, FiArrowUpRight } from 'react-icons/fi';
+import logoImg from '../assets/logo.svg';
 import './Footer.css';
 
 const Footer = () => {
@@ -11,7 +12,9 @@ const Footer = () => {
                 <div className="footer__grid">
                     {/* Brand */}
                     <div className="footer__brand">
-                        <Link to="/" className="footer__logo">SAJHNAA</Link>
+                        <Link to="/" className="footer__logo">
+                            <img src={logoImg} alt="SAJHNAA" style={{ height: '75px' }} />
+                        </Link>
                         <p className="footer__tagline">
                             Handcrafted jewelry that tells your story. From everyday sparkle to bridal splendor — adorned with love.
                         </p>

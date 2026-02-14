@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiMail, FiLock, FiUser, FiArrowRight, FiGithub, FiChevronLeft } from 'react-icons/fi';
 import { SiGoogle } from 'react-icons/si';
 import useStore from '../store/useStore';
+import logoImg from '../assets/logo.svg';
 import './Auth.css';
 
 const Auth = () => {
@@ -69,7 +70,7 @@ const Auth = () => {
                     transition={{ duration: 0.4 }}
                 >
                     <header className="auth-header">
-                        <span className="auth-logo">SAJHNAA</span>
+                        <img src={logoImg} alt="SAJHNAA" className="auth-logo-img" style={{ height: '90px', marginBottom: '1rem' }} />
                         <h1 className="auth-title">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
                         <p className="auth-subtitle">
                             {isLogin

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingBag, FiHeart, FiUser, FiSearch, FiMenu, FiX } from 'react-icons/fi';
 import useStore from '../store/useStore';
 import SearchOverlay from './SearchOverlay';
-import logoImg from '../assets/IMG_20260214_012424.png';
+import logoImg from '../assets/logo.svg';
 import './Navbar.css';
 
 const Navbar = () => {

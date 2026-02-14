@@ -12,6 +12,7 @@ import {
     FiX
 } from 'react-icons/fi';
 import useStore from '../../store/useStore';
+import logoImg from '../../assets/logo.svg';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
@@ -53,12 +54,13 @@ const AdminLayout = () => {
                 animate={{ width: sidebarOpen ? '280px' : '80px' }}
             >
                 <div className="admin-sidebar-header">
-                    <motion.h2
+                    <motion.div
+                        className="admin-sidebar-logo"
                         initial={false}
                         animate={{ opacity: sidebarOpen ? 1 : 0, scale: sidebarOpen ? 1 : 0.8 }}
                     >
-                        SAJHNAA
-                    </motion.h2>
+                        <img src={logoImg} alt="SAJHNAA" style={{ height: '65px' }} />
+                    </motion.div>
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} className="toggle-btn">
                         {sidebarOpen ? <FiX /> : <FiMenu />}
                     </button>

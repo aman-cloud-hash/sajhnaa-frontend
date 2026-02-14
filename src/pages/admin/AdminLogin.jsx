@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import useStore from '../../store/useStore';
+import logoImg from '../../assets/logo.svg';
 import './AdminLogin.css';
 
 const AdminLogin = () => {
@@ -31,7 +32,7 @@ const AdminLogin = () => {
                 transition={{ duration: 0.5, ease: "easeOut" }}
             >
                 <div className="admin-logo">
-                    <h2>SAJHNAA</h2>
+                    <img src={logoImg} alt="SAJHNAA" className="admin-logo-img" style={{ height: '90px' }} />
                     <span>ADMIN PANEL</span>
                 </div>
 
